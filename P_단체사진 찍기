@@ -1,0 +1,102 @@
+#include <string>
+#include <vector>
+#include <iostream>
+#include <map>
+
+using namespace std;
+
+vector<vector<int>> vec;
+vector<int> v;
+
+void dfs(int bottom, int depth, int* visited) {
+    if (depth == bottom) {
+        vec.push_back(v);
+
+        //for (int i = 0; i < bottom; i++) {
+        //    cout << v[i] << " ";
+        //}
+        //cout << "\n";
+    }
+    else {
+        for (int i = 0; i < bottom; i++) {
+            if (visited[i] == 0) {
+                visited[i] = 1;
+                v[depth] = i;
+                dfs(bottom, depth + 1, visited);
+                visited[i] = 0;
+            }
+        }
+    }
+}
+
+// 전역 변수를 정의할 경우 함수 내에 초기화 코드를 꼭 작성해주세요.
+int solution(int n, vector<string> data) {
+    int* visited = new int[8] {0, };
+
+    for (int i = 0; i < 8; i++) {
+        v.push_back(0);
+    }
+
+    dfs(8, 0, visited);
+
+    map<char, int> friends;
+    friends.insert({ 'A', 0 });
+    friends.insert({ 'C', 1 });
+    friends.insert({ 'F', 2 });
+    friends.insert({ 'J', 3 });
+    friends.insert({ 'M', 4 });
+    friends.insert({ 'N', 5 });
+    friends.insert({ 'R', 6 });
+    friends.insert({ 'T', 7 });
+
+    int answer = 0;
+
+    for (int i = 0; i < vec.size(); i++) { //i<vec.size();
+        bool correct = true;
+
+        for (int j = 0; j < n; j++) {
+            int index1 = friends.find(data[j].at(0))->second;
+            //cout << "index1: " << index1 << "\n";
+            int index2 = friends.find(data[j].at(2))->second;
+            //cout << "index2: " << index2 << "\n";
+
+            char op = data[j].at(3);
+            //cout << "op: " << op << "\n";
+
+            if (op == '=') {
+                if (abs(vec[i][index1] - vec[i][index2]) == data[j].at(4)-'0' + 1)
+                    ;
+                else {
+                    correct = false;
+                    break;
+                }
+            }
+            else if (op == '<') {
+                if (abs(vec[i][index1] - vec[i][index2]) < (int)data[j].at(4) - '0' + 1)
+                    ;
+                else {
+                    correct = false;
+                    break;
+                }
+            }
+            else {
+                if (abs(vec[i][index1] - vec[i][index2]) > (int)data[j].at(4) - '0' + 1)
+                    ;
+                else {
+                    correct = false;
+                    break;
+                }
+            }
+        }
+
+        if (correct)
+            answer++;
+    }
+    
+    vector<int> temp;
+    v = temp;
+    vector<vector<int>> temp2;
+    vec = temp2;
+
+    return answer;
+}

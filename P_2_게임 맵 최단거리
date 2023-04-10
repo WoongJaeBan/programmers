@@ -1,0 +1,109 @@
+#include<vector>
+#include<queue>
+#include<iostream>
+
+using namespace std;
+typedef pair<int, int> pii;
+
+int solution(vector<vector<int>> maps)
+{
+	int maxl = maps.size();
+	int maxc = maps[0].size();
+
+	vector<vector<int>> visited;
+    vector<vector<int>> distMat;
+    
+	for (int i = 0; i < maxl; i++) {
+		vector<int> temp;
+
+		for (int j = 0; j < maxc; j++)
+			temp.push_back(0);
+
+		visited.push_back(temp);
+        distMat.push_back(temp);
+	}
+
+
+	queue<pii> q1, q2;
+	q1.push(make_pair(0, 0));
+	int distance = 1;
+	int turn = 1;
+
+	queue<pii>* inQ;
+	queue<pii>* outQ;
+	bool found = false;
+
+	while (!found && distance < maxl * maxc) {
+		//cout << "dist: " << distance << "\n";
+
+		if (turn == 1) {
+			inQ = &q2;
+			outQ = &q1;
+		}
+		else {
+			inQ = &q1;
+			outQ = &q2;
+		}
+
+		pii temp = outQ->front();
+		outQ->pop();
+
+		int l = temp.first;
+		int c = temp.second;
+		//cout << "l: " << l << "\n";
+		//cout << "c: " << c << "\n";
+
+		if (visited[l][c] == 0) {
+			//cout << "1\n";
+			int vx[4] = { -1, 0, 1, 0 };
+			int vy[4] = { 0, -1, 0, 1 };
+
+			for (int i = 0; i < 4; i++) {
+				if (l + vy[i] > -1 && l + vy[i] < maxl && c + vx[i] > -1 && c + vx[i] < maxc) { //안전 범위
+					if (maps[l + vy[i]][c + vx[i]] == 1) {   //갈 수 있는 길
+						if (l + vy[i] == maxl - 1 && c + vx[i] == maxc - 1) { //도착지
+                            //cout << "찾음!\n";
+                            distMat[l + vy[i]][c + vx[i]] = distance;
+							found = true;
+							break;
+						}
+                        
+                        if(visited[l + vy[i]][c + vx[i]] == 0) {
+						//cout << l + vy[i] << " " << c + vx[i] << " 큐에 들어감\n";
+						inQ->push(make_pair(l + vy[i], c + vx[i]));
+                        distMat[l + vy[i]][c + vx[i]] = distance;
+                        }
+					}
+				}
+			}
+            
+            visited[l][c] = 1;
+		}
+		else {
+			//cout << "2\n";
+		}
+
+		if (outQ->empty()) {
+			if (inQ->empty()) {
+				break;
+			}
+
+			if (turn == 1)
+				turn = 2;
+			else
+				turn = 1;
+
+			distance++;
+		}
+	}
+    
+
+
+	int answer = 0;
+	if (found)
+		return distMat[maxl-1][maxc-1] + 1;
+	else
+		return -1;
+}
+
+//https://school.programmers.co.kr/learn/courses/30/lessons/1844

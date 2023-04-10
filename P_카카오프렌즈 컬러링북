@@ -1,0 +1,75 @@
+#include <vector>
+#include <queue>
+#include <iostream>
+
+typedef std::pair<int, int> pii;
+
+using namespace std;
+
+int search(int color, int x, int y, vector<vector<int>> &picture, vector<vector<int>> &visited) {
+	
+	int size = 0;
+
+	int vx[4] = { 0, -1, 1, 0 };
+	int vy[4] = { -1, 0, 0, 1 };
+
+	int maxL = visited.size();
+	int maxC = visited[0].size();
+
+	queue<pii> q;
+	q.push(make_pair(x, y));
+
+	while (!q.empty()) {
+		pii temp = q.front();
+		int l = temp.first;
+		int c = temp.second;
+		q.pop();
+
+		if (visited[l][c] == 0) {
+			visited[l][c] = 1;
+			size++;
+
+			for (int i = 0; i < 4; i++) {
+				if (l + vx[i] > -1 && l + vx[i] < visited.size() && c + vy[i] > -1 && c + vy[i] < visited[0].size()) { //안전범위
+					if (visited[l + vx[i]][c + vy[i]] == 0 && picture[l + vx[i]][c + vy[i]] == color) {//방문 안했으면서 색이 같음
+						q.push(make_pair(l + vx[i], c + vy[i]));
+					}
+				}
+			}
+		}
+	}
+
+
+	return size;
+}
+
+vector<int> solution(int m, int n, vector<vector<int>> picture) {
+	int areas = 0;
+	int maxArea = 0;
+
+	vector<vector<int>> visited;
+	for (int i = 0; i < m; i++) {
+		vector<int> temp;
+		visited.push_back(temp);
+
+		for (int j = 0; j < n; j++) {
+			visited[i].push_back(0);
+		}
+	}
+
+	for (int i = 0; i < m; i++) {
+		for (int j = 0; j < n; j++) {
+			if (picture[i][j] != 0 && visited[i][j] == 0) {
+				areas++;
+				maxArea = max(maxArea, search(picture[i][j], i, j, picture, visited));
+			}
+		}
+	}
+
+
+	vector<int> answer(2);
+	answer[0] = areas;
+	answer[1] = maxArea;
+	return answer;
+}
+

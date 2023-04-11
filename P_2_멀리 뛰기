@@ -1,0 +1,25 @@
+#include <string>
+#include <vector>
+
+using namespace std;
+int d = 1234567;
+
+typedef long long ll;
+ll dp[2001];
+
+long long solution(int n) {
+    dp[0] = 0;
+    dp[1] = 1;
+    dp[2] = 2;
+
+    if (n < 3)
+        return dp[n];
+    else
+        for (int i = 3; i < 2001; i++) {
+            dp[i] = (dp[i - 1] + dp[i - 2]) % d;
+        }
+
+    return dp[n];
+}
+
+//https://school.programmers.co.kr/learn/courses/30/lessons/12914

@@ -1,0 +1,50 @@
+#include <string>
+#include <vector>
+#include <iostream>
+#include <bitset>
+
+using namespace std;
+
+int solution(int n) {
+    string bin = bitset<20>(n).to_string();
+    string ans = "";
+
+    int zeros = 0;
+    int ones = 0;
+
+    for (int i = bin.size() - 1; i > -1; i--) {
+        if (bin.at(i) == '1') {
+            if (i != 0 && bin.at(i - 1) == '0') {
+                //01 찾음!
+                for (int j = 0; j < i - 1; j++)
+                    ans += bin.at(j);
+
+                ans += "10";
+                for (int j = 0; j < zeros; j++)
+                    ans += '0';
+                for (int j = 0; j < ones; j++)
+                    ans += '1';
+
+                break;
+            }
+            else if (i == 0) {
+                ans = "10";
+                for (int j = 0; j < zeros; j++)
+                    ans += '0';
+                for (int j = 0; j < ones; j++)
+                    ans += '1';
+
+                break;
+            }
+            else
+                ones++;
+        }
+        else
+            zeros++;
+    }
+
+    int answer = stoi(ans, 0, 2);
+    return answer;
+}
+
+//https://school.programmers.co.kr/learn/courses/30/lessons/12911

@@ -1,0 +1,32 @@
+#include <iostream>
+
+using namespace std;
+typedef long long ll;
+
+ll dp[5001]{ 0, };
+ll d = 1000000007;
+ll c = 0;
+
+int calc(int n) {
+    c++;
+
+    if (dp[n] != 0)
+        return dp[n];
+    else{
+        ll ret = 2;
+        for (int i = 2; i < n; i += 2) {
+            if (dp[i] == 0)
+                dp[i] = calc(i);
+            
+            ret = ret + dp[i] * 2;
+        }
+        ret += calc(n - 2);
+        ret %= d;
+        dp[n] = ret;
+
+        return ret;
+    }
+}
+
+//https://school.programmers.co.kr/learn/courses/30/lessons/12902
+
